@@ -13,11 +13,7 @@
  exports.findAllSolutions = function(grid, dictionary) {
   let solutions = [];
 
-  if (!isGridValid(grid)){
-    return solutions;
-  }
-
-  if (grid.length == null || dictionary == null){
+  if (grid == null || dictionary == null){
     return solutions;
   }
 
@@ -29,6 +25,10 @@
   }
 
   convertCaseToLower(grid, dictionary);
+
+  if (!isGridValid(grid)){
+    return solutions;
+  }
 
   let solutionSet = new Set();
   let hash = createHashMap(dictionary);
@@ -42,6 +42,18 @@
   }
   solutions = Array.from(solutionSet);
   return solutions;
+}
+
+convertCaseToLower = function(grid, dict){
+  for(let i = 0; i < grid.length; i++){
+    for(let j = 0; j < grid[i].length; j++){
+      grid[i][j] = grid[i][j].toLowerCase();
+    }
+  }
+
+  for(let i = 0; i < dict.length; i++){
+    dict[i] = dict[i].toLowerCase();
+  }
 }
 
 createHashMap = function(dictionary){
@@ -66,15 +78,15 @@ createHashMap = function(dictionary){
   return dict;
 }
 
-findWords = function(word, y, x, grid, visited, has, solutionSet){
+findWords = function(word, y, x, grid, visited, hash, solutionSet){
 
   let adjMatrix = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, 1], [1, 0], [1, -1]];
 
-  if (y < 0 || y >= grid.length || x < 0 || x >= grid.length || visited[y][x] == true)
+  if (y < 0 || x < 0 || y >= grid.length || x >= grid.length || visited[y][x] == true)
     return true;
 
   word += grid[y][x];
-  if (isPrefix(word, hash)){
+  if (isPrefixOrWord(word, hash)){
     visited[y][x] = true;
     if (isWord(word, hash)){
       if (word.length >= 3)
@@ -87,8 +99,8 @@ findWords = function(word, y, x, grid, visited, has, solutionSet){
   visited[y][x] = false;
 }
 
-isPrefix = function(word, hash){
-  //return hash[word] != undefined;
+isPrefixOrWord = function(word, hash){
+  return hash[word] != undefined;
   for (let tword of hash){
     if (tword.substr(0, word.length) == word){
       return true;
@@ -98,7 +110,7 @@ isPrefix = function(word, hash){
 }
 
 isWord = function(word, hash){
-  //return hash[word] == 1;
+  return hash[word] == 1;
   for (let tword of hash){
     if (tword == word && word.length >= 3){
       return true;
