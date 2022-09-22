@@ -11,6 +11,8 @@ function lowercaseStringArray(stringArray) {
 
 describe('Boggle Solver tests suite:', () => {
   describe('Normal input', () => {
+
+    //test for valid words in all of the submissions
     
     test('Normal case 2x2', () =>{
         //Tests a normal 2x2 grid.
@@ -91,8 +93,31 @@ describe('Boggle Solver tests suite:', () => {
       lowercaseStringArray(solutions);
       lowercaseStringArray(dictionary);
       expect(solutions.sort()).toEqual(dictionary.sort());
-    })
+    });
+
+    //End with Q
+    test('Ends with Q', () => {
+      let grid = [['A', 'Qu'],
+                  ['B', 'C']];
+      let dictionary = ['AQ', 'CQ'];
+      let expected = [];
+      let solutions = boggle_solver.findAllSolutions(grid, dictionary);
+      lowercaseStringArray(solutions);
+      lowercaseStringArray(dictionary);
+      expect(solutions.sort()).toEqual(expected.sort());
+    });
  
+    //contains Qx (x != "u"), only returns valid Qu inputs
+    test('Qx cases', () => {
+      let grid = [['A', 'Qx'],
+                  ['Qu', 'C']];
+      let dictionary = ['AQu', 'CQu', 'QuC', 'Qua'];
+      let solutions = boggle_solver.findAllSolutions(grid, dictionary);
+      lowercaseStringArray(solutions);
+      lowercaseStringArray(dictionary);
+      expect(solutions.sort()).toEqual(dictionary.sort());
+    });
+
     // Cases such as St
     test('Works with St', () =>{
       let grid = [['A', 'B'],
@@ -102,7 +127,20 @@ describe('Boggle Solver tests suite:', () => {
       lowercaseStringArray(solutions);
       lowercaseStringArray(dictionary);
       expect(solutions.sort()).toEqual(dictionary.sort());
-    })
+    });
+
+    //Non-adjacent letters
+    test('Non-adjacent', () =>{
+      let grid = [['A', 'B', 'C'],
+                    ['D', 'E', 'F'],
+                    ['G', 'H', 'I']];
+      let dictionary = ['Abe', 'fda', 'bed'];
+      let expected = ['bed', 'abe'];
+      let solutions = boggle_solver.findAllSolutions(grid, dictionary);
+      lowercaseStringArray(solutions);
+      lowercaseStringArray(dictionary);
+      expect(solutions.sort()).toEqual(expected.sort());
+    });
   });
 
   
@@ -156,5 +194,22 @@ describe('Boggle Solver tests suite:', () => {
       expect(solutions.sort()).toEqual(expected.sort());
     });
 
+    test('Duplicate letters', () =>{
+      //Should not return a letter multiple times if that letter is not int the grid the amount of times used
+      let grid = [['A', 'B', 'J', 'O', 'C'],
+                    ['C', 'H', 'N', 'K', 'St'],
+                    ['I', 'M', 'E', 'P', 'A'],
+                    ['L', 'U', 'R', 'E', 'Qu'],
+                    ['W', 'F', 'D', 'X', 'I']];
+      let dictionary = ['here', 'cook', 'runner', 'keep', 'nook'];
+      let expected = ['here', 'keep'];
+
+      let solutions = boggle_solver.findAllSolutions(grid, dictionary);
+
+      // Lowercasing for case-insensitive string array matching.
+      lowercaseStringArray(solutions);
+      lowercaseStringArray(expected);
+      expect(solutions.sort()).toEqual(expected.sort());
+    })
   });
 });
